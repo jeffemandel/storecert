@@ -16,6 +16,11 @@ password: A string used to encrypt the certificates in the database. We need the
 
 Note that the certbot account should only be used on localhost, and this should be reflected in your pg_hba.conf. Similarly, certuser will probably only need access from your local network.
 
+The database certstore can be created with the certbot.sql file.
+
+The program can be compiled with
+javac -cp somepath/postgresql-42.1.4.jar storecert.java
+
 Usage
 On www.mydomain.net, we look for directories inside certdir, and for all of these, grab the 4 PEM files and send them to the database:
 
@@ -27,6 +32,6 @@ On osxserver.mydomain.net (having created /etc/letsencrypt/live/osxserver.mydoma
 
 This will grab the certs, decrypt, and write them to the directory. It also outputs the cert in DER format in case you need this to import into a keystore.
 
-Note that there is nothing about this that couldn't be done with scp, but it is probably a more secure approach.
+Note that there is nothing about this that couldn't be done with scp, but it is probably a more secure approach. The program has been tested on Ubuntu 16.04 and MacOS 10.11. It isn't very tolerant of errors.
 
 
