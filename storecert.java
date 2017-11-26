@@ -152,11 +152,12 @@ public class storecert {
 			PreparedStatement st = conn.prepareStatement("SELECT cert,chain,fullchain,privkey from certstore where server=?");
 			st.setString(1, server);
 			ResultSet rs = st.executeQuery();
-			rs.next();
-        	saveCert(server, "privkey", rs.getString("privkey"));
-        	saveDER(server, "cert", rs.getString("cert"));
-        	saveCert(server, "chain", rs.getString("chain"));
-        	saveCert(server, "fullchain", rs.getString("fullchain"));
+			if (rs.next()) {
+				saveCert(server, "privkey", rs.getString("privkey"));
+				saveDER(server, "cert", rs.getString("cert"));
+				saveCert(server, "chain", rs.getString("chain"));
+				saveCert(server, "fullchain", rs.getString("fullchain"));
+        	}
 			st.close();
 		} catch (SQLException e) {
 			System.err.println("SQL Error: " + e.getMessage());
@@ -178,8 +179,6 @@ public class storecert {
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		InputStream stream = new ByteArrayInputStream(theKey.getBytes(StandardCharsets.UTF_8));
 		X509Certificate myCert = (X509Certificate)cf.generateCertificate(stream);
-// 		PemReader certReader = new PemReader(new StringReader(theKey));
-// 		X509Certificate myCert = (X509Certificate) certReader.readPemObject();
         Files.write(Paths.get(certdir, server, certname.concat(".der")), myCert.getEncoded());
         } catch (CertificateException ex) {
 			System.err.println("CertificateException error: " + ex.getMessage());
